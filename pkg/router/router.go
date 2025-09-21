@@ -39,24 +39,7 @@ func NewRouter() *Router {
 		circuitBreaker: NewCircuitBreaker(),
 	}
 
-	// 初始化默认路由
-	router.initDefaultRoutes()
-
 	return router
-}
-
-// initDefaultRoutes 初始化默认路由
-func (r *Router) initDefaultRoutes() {
-	// 添加一些默认的测试路由
-	r.AddRoute(&Route{
-		ID:          "test-echo",
-		Path:        "/api/v1/echo",
-		Method:      "GET",
-		ServiceName: "test",
-		BackendURL:  "http://localhost:8080",
-		Weight:      100,
-		Enabled:     true,
-	})
 }
 
 // AddRoute 添加路由

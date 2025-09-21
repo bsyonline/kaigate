@@ -9,16 +9,26 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+var (
+	debugFlag     *bool
+	httpAddrFlag  *string
+	wsAddrFlag    *string
+	adminAddrFlag *string
+	logLevelFlag  *string
+	logFormatFlag *string
+	logFileFlag   *string
+)
+
 // Config 定义系统配置结构
 type Config struct {
 	// 服务配置
 	Server struct {
-		HTTPAddr      string `yaml:"http_addr"`
-		WSAddr        string `yaml:"ws_addr"`
-		AdminAddr     string `yaml:"admin_addr"`
-		Debug         bool   `yaml:"debug"`
-		ConnTimeout   int    `yaml:"conn_timeout"`
-		RWTimeout     int    `yaml:"rw_timeout"`
+		HTTPAddr    string `yaml:"http_addr"`
+		WSAddr      string `yaml:"ws_addr"`
+		AdminAddr   string `yaml:"admin_addr"`
+		Debug       bool   `yaml:"debug"`
+		ConnTimeout int    `yaml:"conn_timeout"`
+		RWTimeout   int    `yaml:"rw_timeout"`
 	} `yaml:"server"`
 
 	// 日志配置
@@ -45,9 +55,9 @@ type Config struct {
 
 	// 代理路由配置
 	ProxyRoutes []struct {
-		Path       string `yaml:"path"`       // 代理路径
-		TargetURL  string `yaml:"target_url"` // 目标URL
-		Enable     bool   `yaml:"enable"`     // 是否启用
+		Path      string `yaml:"path"`       // 代理路径
+		TargetURL string `yaml:"target_url"` // 目标URL
+		Enable    bool   `yaml:"enable"`     // 是否启用
 	} `yaml:"proxy_routes"`
 }
 
@@ -180,26 +190,27 @@ func loadFromCmdLine() {
 	loadFromCmdLineFor(&GlobalConfig)
 }
 
-// loadFromCmdLineFor 从命令行参数加载配置到指定实例
 func loadFromCmdLineFor(config *Config) {
-	// 定义命令行参数
-	debug := flag.Bool("debug", config.Server.Debug, "Enable debug mode")
-	httpAddr := flag.String("http-addr", config.Server.HTTPAddr, "HTTP server listen address")
-	wsAddr := flag.String("ws-addr", config.Server.WSAddr, "WebSocket server listen address")
-	adminAddr := flag.String("admin-addr", config.Server.AdminAddr, "Admin interface listen address")
-	logLevel := flag.String("log-level", config.Log.Level, "Log level")
-	logFormat := flag.String("log-format", config.Log.Format, "Log format")
-	logFile := flag.String("log-file", config.Log.File, "Log file path")
+	// 检查标志是否已经定义，如果未定义则定义它们
+	if debugFlag == nil {
+		debugFlag = flag.Bool("debug", config.Server.Debug, "Enable debug mode")
+		httpAddrFlag = flag.String("http-addr", config.Server.HTTPAddr, "HTTP server listen address")
+		wsAddrFlag = flag.String("ws-addr", config.Server.WSAddr, "WebSocket server listen address")
+		adminAddrFlag = flag.String("admin-addr", config.Server.AdminAddr, "Admin interface listen address")
+		logLevelFlag = flag.String("log-level", config.Log.Level, "Log level")
+		logFormatFlag = flag.String("log-format", config.Log.Format, "Log format")
+		logFileFlag = flag.String("log-file", config.Log.File, "Log file path")
 
-	// 解析命令行参数
-	flag.Parse()
+		// 解析命令行参数
+		flag.Parse()
+	}
 
 	// 更新配置
-	config.Server.Debug = *debug
-	config.Server.HTTPAddr = *httpAddr
-	config.Server.WSAddr = *wsAddr
-	config.Server.AdminAddr = *adminAddr
-	config.Log.Level = *logLevel
-	config.Log.Format = *logFormat
-	config.Log.File = *logFile
+	config.Server.Debug = *debugFlag
+	config.Server.HTTPAddr = *httpAddrFlag
+	config.Server.WSAddr = *wsAddrFlag
+	config.Server.AdminAddr = *adminAddrFlag
+	config.Log.Level = *logLevelFlag
+	config.Log.Format = *logFormatFlag
+	config.Log.File = *logFileFlag
 }

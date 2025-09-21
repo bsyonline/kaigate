@@ -31,21 +31,14 @@ router:
 # 代理路由配置 - 可配置多个代理路由，无需修改代码
 proxy_routes:
   # 示例1: 将/deepsearch请求转发到localhost:8301
+
   - path: /send
-    target_url: "http://localhost:8301"
-    enable: true
-
-  - path: /apple
-    target_url: "http://localhost:8301"
-    enable: true
-
-  - path: /deepsearch
     target_url: "http://localhost:8301"
     enable: true
   
   # 示例2: 将/search请求转发到另一个服务
   - path: /search
-    target_url: "http://localhost:8302"
+    target_url: "http://localhost:8301"
     enable: true
   
   # 示例3: 一个禁用的代理路由
